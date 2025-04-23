@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.ChangyongyujuCollectionDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.changyongyuju_id as changyongyujuId
+        ,a.yonghu_id as yonghuId
+        ,a.changyongyuju_collection_types as changyongyujuCollectionTypes
+        ,a.insert_time as insertTime
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.ChangyongyujuCollectionView" >
+        SELECT
+        <include refid="Base_Column_List" />
+
+--         级联表的字段
+        ,changyongyuju.changyongyuju_uuid_number as changyongyujuUuidNumber
+        ,changyongyuju.changyongyuju_name as changyongyujuName
+        ,changyongyuju.changyongyuju_photo as changyongyujuPhoto
+        ,changyongyuju.changyongyuju_video as changyongyujuVideo
+        ,changyongyuju.changyongyuju_music as changyongyujuMusic
+        ,changyongyuju.changyongyuju_file as changyongyujuFile
+        ,changyongyuju.changyongyuju_types as changyongyujuTypes
+        ,changyongyuju.changyongyuju_clicknum as changyongyujuClicknum
+        ,changyongyuju.changyongyuju_content as changyongyujuContent
+        ,changyongyuju.shangxia_types as shangxiaTypes
+        ,changyongyuju.changyongyuju_delete as changyongyujuDelete
+        ,yonghu.yonghu_name as yonghuName
+        ,yonghu.yonghu_phone as yonghuPhone
+        ,yonghu.yonghu_id_number as yonghuIdNumber
+        ,yonghu.yonghu_photo as yonghuPhoto
+        ,yonghu.yonghu_email as yonghuEmail
+
+        FROM changyongyuju_collection  a
+        left JOIN changyongyuju changyongyuju ON a.changyongyuju_id = changyongyuju.id
+        left JOIN yonghu yonghu ON a.yonghu_id = yonghu.id
+
+        <where>
+            <if test="params.ids != null">
+                and a.id in
+                <foreach item="item" index="index" collection="params.ids" open="(" separator="," close=")">
+                #{item}
+                </foreach>
+            </if>
+            <if test="params.changyongyujuId != null and params.changyongyujuId != ''">
+                and (
+                    a.changyongyuju_id = #{params.changyongyujuId}
+                )
+            </if>
+            <if test="params.yonghuId != null and params.yonghuId != ''">
+                and (
+                    a.yonghu_id = #{params.yonghuId}
+                )
+            </if>
+            <if test="params.changyongyujuCollectionTypes != null and params.changyongyujuCollectionTypes != ''">
+                and a.changyongyuju_collection_types = #{params.changyongyujuCollectionTypes}
+            </if>
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) >= UNIX_TIMESTAMP(#{params.insertTimeStart}) ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) <= UNIX_TIMESTAMP(#{params.insertTimeEnd}) ]]>
+            </if>
+
+                <!-- 判断常用语句的id不为空 -->
+            <if test=" params.changyongyujuIdNotNull != '' and params.changyongyujuIdNotNull != null and params.changyongyujuIdNotNull != 'null' ">
+                and a.changyongyuju_id IS NOT NULL
+            </if>
+            <if test=" params.changyongyujuUuidNumber != '' and params.changyongyujuUuidNumber != null and params.changyongyujuUuidNumber != 'null' ">
+                and changyongyuju.changyongyuju_uuid_number like CONCAT('%',#{params.changyongyujuUuidNumber},'%')
+            </if>
+            <if test=" params.changyongyujuName != '' and params.changyongyujuName != null and params.changyongyujuName != 'null' ">
+                and changyongyuju.changyongyuju_name like CONCAT('%',#{params.changyongyujuName},'%')
+            </if>
+            <if test=" params.changyongyujuVideo != '' and params.changyongyujuVideo != null and params.changyongyujuVideo != 'null' ">
+                and changyongyuju.changyongyuju_video like CONCAT('%',#{params.changyongyujuVideo},'%')
+            </if>
+            <if test=" params.changyongyujuMusic != '' and params.changyongyujuMusic != null and params.changyongyujuMusic != 'null' ">
+                and changyongyuju.changyongyuju_music like CONCAT('%',#{params.changyongyujuMusic},'%')
+            </if>
+            <if test="params.changyongyujuTypes != null  and params.changyongyujuTypes != ''">
+                and changyongyuju.changyongyuju_types = #{params.changyongyujuTypes}
+            </if>
+
+            <if test="params.changyongyujuClicknumStart != null  and params.changyongyujuClicknumStart != '' ">
+                <![CDATA[  and changyongyuju.changyongyuju_clicknum >= #{params.changyongyujuClicknumStart}   ]]>
+            </if>
+            <if test="params.changyongyujuClicknumEnd != null  and params.changyongyujuClicknumEnd != '' ">
+                <![CDATA[  and changyongyuju.changyongyuju_clicknum <= #{params.changyongyujuClicknumEnd}   ]]>
+            </if>
+            <if test="params.changyongyujuClicknum != null  and params.changyongyujuClicknum != '' ">
+                and changyongyuju.changyongyuju_clicknum = #{params.changyongyujuClicknum}
+            </if>
+            <if test=" params.changyongyujuContent != '' and params.changyongyujuContent != null and params.changyongyujuContent != 'null' ">
+                and changyongyuju.changyongyuju_content like CONCAT('%',#{params.changyongyujuContent},'%')
+            </if>
+            <if test="params.shangxiaTypes != null  and params.shangxiaTypes != ''">
+                and changyongyuju.shangxia_types = #{params.shangxiaTypes}
+            </if>
+
+            <if test="params.changyongyujuDeleteStart != null  and params.changyongyujuDeleteStart != '' ">
+                <![CDATA[  and changyongyuju.changyongyuju_delete >= #{params.changyongyujuDeleteStart}   ]]>
+            </if>
+            <if test="params.changyongyujuDeleteEnd != null  and params.changyongyujuDeleteEnd != '' ">
+                <![CDATA[  and changyongyuju.changyongyuju_delete <= #{params.changyongyujuDeleteEnd}   ]]>
+            </if>
+            <if test="params.changyongyujuDelete != null  and params.changyongyujuDelete != '' ">
+                and changyongyuju.changyongyuju_delete = #{params.changyongyujuDelete}
+            </if>
+                <!-- 判断用户的id不为空 -->
+            <if test=" params.yonghuIdNotNull != '' and params.yonghuIdNotNull != null and params.yonghuIdNotNull != 'null' ">
+                and a.yonghu_id IS NOT NULL
+            </if>
+            <if test=" params.yonghuName != '' and params.yonghuName != null and params.yonghuName != 'null' ">
+                and yonghu.yonghu_name like CONCAT('%',#{params.yonghuName},'%')
+            </if>
+            <if test=" params.yonghuPhone != '' and params.yonghuPhone != null and params.yonghuPhone != 'null' ">
+                and yonghu.yonghu_phone like CONCAT('%',#{params.yonghuPhone},'%')
+            </if>
+            <if test=" params.yonghuIdNumber != '' and params.yonghuIdNumber != null and params.yonghuIdNumber != 'null' ">
+                and yonghu.yonghu_id_number like CONCAT('%',#{params.yonghuIdNumber},'%')
+            </if>
+            <if test=" params.yonghuEmail != '' and params.yonghuEmail != null and params.yonghuEmail != 'null' ">
+                and yonghu.yonghu_email like CONCAT('%',#{params.yonghuEmail},'%')
+            </if>
+        </where>
+
+        order by a.${params.orderBy} desc 
+    </select>
+
+</mapper>

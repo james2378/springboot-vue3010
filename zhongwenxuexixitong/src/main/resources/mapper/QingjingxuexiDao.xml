@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.QingjingxuexiDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.qingjingxuexi_uuid_number as qingjingxuexiUuidNumber
+        ,a.qingjingxuexi_name as qingjingxuexiName
+        ,a.qingjingxuexi_photo as qingjingxuexiPhoto
+        ,a.qingjingxuexi_video as qingjingxuexiVideo
+        ,a.qingjingxuexi_file as qingjingxuexiFile
+        ,a.qingjingxuexi_types as qingjingxuexiTypes
+        ,a.qingjingxuexi_clicknum as qingjingxuexiClicknum
+        ,a.qingjingxuexi_content as qingjingxuexiContent
+        ,a.shangxia_types as shangxiaTypes
+        ,a.qingjingxuexi_delete as qingjingxuexiDelete
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.QingjingxuexiView" >
+        SELECT
+        <include refid="Base_Column_List" />
+
+--         级联表的字段
+
+        FROM qingjingxuexi  a
+
+        <where>
+            <if test="params.ids != null">
+                and a.id in
+                <foreach item="item" index="index" collection="params.ids" open="(" separator="," close=")">
+                #{item}
+                </foreach>
+            </if>
+            <if test=" params.qingjingxuexiUuidNumber != '' and params.qingjingxuexiUuidNumber != null and params.qingjingxuexiUuidNumber != 'null' ">
+                and a.qingjingxuexi_uuid_number like CONCAT('%',#{params.qingjingxuexiUuidNumber},'%')
+            </if>
+            <if test=" params.qingjingxuexiName != '' and params.qingjingxuexiName != null and params.qingjingxuexiName != 'null' ">
+                and a.qingjingxuexi_name like CONCAT('%',#{params.qingjingxuexiName},'%')
+            </if>
+            <if test=" params.qingjingxuexiVideo != '' and params.qingjingxuexiVideo != null and params.qingjingxuexiVideo != 'null' ">
+                and a.qingjingxuexi_video like CONCAT('%',#{params.qingjingxuexiVideo},'%')
+            </if>
+            <if test="params.qingjingxuexiTypes != null and params.qingjingxuexiTypes != ''">
+                and a.qingjingxuexi_types = #{params.qingjingxuexiTypes}
+            </if>
+            <if test="params.qingjingxuexiClicknumStart != null and params.qingjingxuexiClicknumStart != ''">
+                <![CDATA[  and a.qingjingxuexi_clicknum >= #{params.qingjingxuexiClicknumStart}   ]]>
+            </if>
+            <if test="params.qingjingxuexiClicknumEnd != null and params.qingjingxuexiClicknumEnd != ''">
+                <![CDATA[  and a.qingjingxuexi_clicknum <= #{params.qingjingxuexiClicknumEnd}   ]]>
+            </if>
+             <if test="params.qingjingxuexiClicknum != null and params.qingjingxuexiClicknum != ''">
+                and a.qingjingxuexi_clicknum = #{params.qingjingxuexiClicknum}
+             </if>
+            <if test=" params.qingjingxuexiContent != '' and params.qingjingxuexiContent != null and params.qingjingxuexiContent != 'null' ">
+                and a.qingjingxuexi_content like CONCAT('%',#{params.qingjingxuexiContent},'%')
+            </if>
+            <if test="params.shangxiaTypes != null and params.shangxiaTypes != ''">
+                and a.shangxia_types = #{params.shangxiaTypes}
+            </if>
+            <if test="params.qingjingxuexiDeleteStart != null and params.qingjingxuexiDeleteStart != ''">
+                <![CDATA[  and a.qingjingxuexi_delete >= #{params.qingjingxuexiDeleteStart}   ]]>
+            </if>
+            <if test="params.qingjingxuexiDeleteEnd != null and params.qingjingxuexiDeleteEnd != ''">
+                <![CDATA[  and a.qingjingxuexi_delete <= #{params.qingjingxuexiDeleteEnd}   ]]>
+            </if>
+             <if test="params.qingjingxuexiDelete != null and params.qingjingxuexiDelete != ''">
+                and a.qingjingxuexi_delete = #{params.qingjingxuexiDelete}
+             </if>
+
+        </where>
+
+        order by a.${params.orderBy} desc 
+    </select>
+
+</mapper>

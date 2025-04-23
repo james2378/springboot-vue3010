@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.ShicixuexiDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.shicixuexi_uuid_number as shicixuexiUuidNumber
+        ,a.shicixuexi_name as shicixuexiName
+        ,a.shicixuexi_photo as shicixuexiPhoto
+        ,a.shicixuexi_video as shicixuexiVideo
+        ,a.shicixuexi_file as shicixuexiFile
+        ,a.shicixuexi_types as shicixuexiTypes
+        ,a.shicixuexi_clicknum as shicixuexiClicknum
+        ,a.shicixuexi_content as shicixuexiContent
+        ,a.shangxia_types as shangxiaTypes
+        ,a.shicixuexi_delete as shicixuexiDelete
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.ShicixuexiView" >
+        SELECT
+        <include refid="Base_Column_List" />
+
+--         级联表的字段
+
+        FROM shicixuexi  a
+
+        <where>
+            <if test="params.ids != null">
+                and a.id in
+                <foreach item="item" index="index" collection="params.ids" open="(" separator="," close=")">
+                #{item}
+                </foreach>
+            </if>
+            <if test=" params.shicixuexiUuidNumber != '' and params.shicixuexiUuidNumber != null and params.shicixuexiUuidNumber != 'null' ">
+                and a.shicixuexi_uuid_number like CONCAT('%',#{params.shicixuexiUuidNumber},'%')
+            </if>
+            <if test=" params.shicixuexiName != '' and params.shicixuexiName != null and params.shicixuexiName != 'null' ">
+                and a.shicixuexi_name like CONCAT('%',#{params.shicixuexiName},'%')
+            </if>
+            <if test=" params.shicixuexiVideo != '' and params.shicixuexiVideo != null and params.shicixuexiVideo != 'null' ">
+                and a.shicixuexi_video like CONCAT('%',#{params.shicixuexiVideo},'%')
+            </if>
+            <if test="params.shicixuexiTypes != null and params.shicixuexiTypes != ''">
+                and a.shicixuexi_types = #{params.shicixuexiTypes}
+            </if>
+            <if test="params.shicixuexiClicknumStart != null and params.shicixuexiClicknumStart != ''">
+                <![CDATA[  and a.shicixuexi_clicknum >= #{params.shicixuexiClicknumStart}   ]]>
+            </if>
+            <if test="params.shicixuexiClicknumEnd != null and params.shicixuexiClicknumEnd != ''">
+                <![CDATA[  and a.shicixuexi_clicknum <= #{params.shicixuexiClicknumEnd}   ]]>
+            </if>
+             <if test="params.shicixuexiClicknum != null and params.shicixuexiClicknum != ''">
+                and a.shicixuexi_clicknum = #{params.shicixuexiClicknum}
+             </if>
+            <if test=" params.shicixuexiContent != '' and params.shicixuexiContent != null and params.shicixuexiContent != 'null' ">
+                and a.shicixuexi_content like CONCAT('%',#{params.shicixuexiContent},'%')
+            </if>
+            <if test="params.shangxiaTypes != null and params.shangxiaTypes != ''">
+                and a.shangxia_types = #{params.shangxiaTypes}
+            </if>
+            <if test="params.shicixuexiDeleteStart != null and params.shicixuexiDeleteStart != ''">
+                <![CDATA[  and a.shicixuexi_delete >= #{params.shicixuexiDeleteStart}   ]]>
+            </if>
+            <if test="params.shicixuexiDeleteEnd != null and params.shicixuexiDeleteEnd != ''">
+                <![CDATA[  and a.shicixuexi_delete <= #{params.shicixuexiDeleteEnd}   ]]>
+            </if>
+             <if test="params.shicixuexiDelete != null and params.shicixuexiDelete != ''">
+                and a.shicixuexi_delete = #{params.shicixuexiDelete}
+             </if>
+
+        </where>
+
+        order by a.${params.orderBy} desc 
+    </select>
+
+</mapper>

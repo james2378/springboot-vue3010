@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.ChangyongyujuDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.changyongyuju_uuid_number as changyongyujuUuidNumber
+        ,a.changyongyuju_name as changyongyujuName
+        ,a.changyongyuju_photo as changyongyujuPhoto
+        ,a.changyongyuju_video as changyongyujuVideo
+        ,a.changyongyuju_music as changyongyujuMusic
+        ,a.changyongyuju_file as changyongyujuFile
+        ,a.changyongyuju_types as changyongyujuTypes
+        ,a.changyongyuju_clicknum as changyongyujuClicknum
+        ,a.changyongyuju_content as changyongyujuContent
+        ,a.shangxia_types as shangxiaTypes
+        ,a.changyongyuju_delete as changyongyujuDelete
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.ChangyongyujuView" >
+        SELECT
+        <include refid="Base_Column_List" />
+
+--         级联表的字段
+
+        FROM changyongyuju  a
+
+        <where>
+            <if test="params.ids != null">
+                and a.id in
+                <foreach item="item" index="index" collection="params.ids" open="(" separator="," close=")">
+                #{item}
+                </foreach>
+            </if>
+            <if test=" params.changyongyujuUuidNumber != '' and params.changyongyujuUuidNumber != null and params.changyongyujuUuidNumber != 'null' ">
+                and a.changyongyuju_uuid_number like CONCAT('%',#{params.changyongyujuUuidNumber},'%')
+            </if>
+            <if test=" params.changyongyujuName != '' and params.changyongyujuName != null and params.changyongyujuName != 'null' ">
+                and a.changyongyuju_name like CONCAT('%',#{params.changyongyujuName},'%')
+            </if>
+            <if test=" params.changyongyujuVideo != '' and params.changyongyujuVideo != null and params.changyongyujuVideo != 'null' ">
+                and a.changyongyuju_video like CONCAT('%',#{params.changyongyujuVideo},'%')
+            </if>
+            <if test=" params.changyongyujuMusic != '' and params.changyongyujuMusic != null and params.changyongyujuMusic != 'null' ">
+                and a.changyongyuju_music like CONCAT('%',#{params.changyongyujuMusic},'%')
+            </if>
+            <if test="params.changyongyujuTypes != null and params.changyongyujuTypes != ''">
+                and a.changyongyuju_types = #{params.changyongyujuTypes}
+            </if>
+            <if test="params.changyongyujuClicknumStart != null and params.changyongyujuClicknumStart != ''">
+                <![CDATA[  and a.changyongyuju_clicknum >= #{params.changyongyujuClicknumStart}   ]]>
+            </if>
+            <if test="params.changyongyujuClicknumEnd != null and params.changyongyujuClicknumEnd != ''">
+                <![CDATA[  and a.changyongyuju_clicknum <= #{params.changyongyujuClicknumEnd}   ]]>
+            </if>
+             <if test="params.changyongyujuClicknum != null and params.changyongyujuClicknum != ''">
+                and a.changyongyuju_clicknum = #{params.changyongyujuClicknum}
+             </if>
+            <if test=" params.changyongyujuContent != '' and params.changyongyujuContent != null and params.changyongyujuContent != 'null' ">
+                and a.changyongyuju_content like CONCAT('%',#{params.changyongyujuContent},'%')
+            </if>
+            <if test="params.shangxiaTypes != null and params.shangxiaTypes != ''">
+                and a.shangxia_types = #{params.shangxiaTypes}
+            </if>
+            <if test="params.changyongyujuDeleteStart != null and params.changyongyujuDeleteStart != ''">
+                <![CDATA[  and a.changyongyuju_delete >= #{params.changyongyujuDeleteStart}   ]]>
+            </if>
+            <if test="params.changyongyujuDeleteEnd != null and params.changyongyujuDeleteEnd != ''">
+                <![CDATA[  and a.changyongyuju_delete <= #{params.changyongyujuDeleteEnd}   ]]>
+            </if>
+             <if test="params.changyongyujuDelete != null and params.changyongyujuDelete != ''">
+                and a.changyongyuju_delete = #{params.changyongyujuDelete}
+             </if>
+
+        </where>
+
+        order by a.${params.orderBy} desc 
+    </select>
+
+</mapper>
